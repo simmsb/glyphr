@@ -1,3 +1,5 @@
+use u4::{AsNibbles, U4};
+
 use crate::generator::line;
 
 pub struct SdfRaster {
@@ -91,25 +93,15 @@ pub fn sdf_to_bitmap(sdf: &SdfRaster) -> Vec<u8> {
     buffer
 }
 
-pub fn sdf_bitmap_to_fixed_bitmap<F>(
-    sdf_data: &[u8],
-    width: i32,
-    height: i32,
-    predicate: F,
-) -> Vec<u8>
-where
-    F: Fn(u8) -> bool,
-{
+pub fn sdf_bitmap_to_fixed_bitmap(sdf_data: &[u8], width: i32, height: i32) -> Vec<u8> {
     let total_pixels = (width * height) as usize;
-    let bitmap_size = total_pixels.div_ceil(8);
+    let bitmap_size = total_pixels.div_ceil(2);
     let mut bitmap = vec![0u8; bitmap_size];
+    let mut bw = AsNibbles(&mut bitmap);
 
     for (i, sdf_i) in sdf_data.iter().enumerate().take(total_pixels) {
-        if predicate(*sdf_i) {
-            let byte_index = i / 8;
-            let bit_index = i % 8;
-            bitmap[byte_index] |= 1 << (7 - bit_index);
-        }
+        let v = U4::new(*sdf_i / 16).unwrap();
+        bw.set(i, v);
     }
 
     bitmap

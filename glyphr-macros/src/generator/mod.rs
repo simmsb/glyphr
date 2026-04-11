@@ -41,7 +41,6 @@ pub fn generate_font(loaded_font: &crate::config::FontLoaded) -> Vec<(Vec<u8>, G
                         &bitmap_sdf,
                         metrics.width,
                         metrics.height,
-                        |val| val > 128,
                     );
                     bitmap_sdf
                 }
@@ -107,6 +106,7 @@ fn rle_encode(data: Vec<u8>) -> Vec<u8> {
                 break;
             }
         }
+        // this is dumb
         encoded.push(count);
         encoded.push(value);
     }

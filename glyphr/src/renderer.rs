@@ -3,6 +3,8 @@
 //! Contains the core logic to render SDF-based fonts with RLE decoding,
 //! bitmap-encoded fonts rendering, bilinear sampling, and blending to an output framebuffer.
 
+use u4::AsNibbles;
+
 #[allow(unused_imports)]
 use crate::{
     BitmapFormat, Glyphr, GlyphrError, RenderTarget,
@@ -276,9 +278,9 @@ fn render_glyph_bitmap<T: RenderTarget>(
         let y_src = oy - dst_y;
         for ox in x0..x1 {
             let x_src = ox - dst_x;
-            if bitmap_value_at(glyph, x_src, y_src)?
-                && !target.write_pixel(ox as u32, oy as u32, color)
-            {
+            let value = bitmap_value_at(glyph, x_src, y_src)?;
+            let color = ((value as u32) << 24) | color;
+            if !target.write_pixel(ox as u32, oy as u32, color) {
                 return Err(GlyphrError::InvalidTarget);
             }
         }
@@ -293,20 +295,19 @@ pub fn advance(c: char, font: Font) -> Result<i32, GlyphrError> {
 }
 
 /// Return a bit from a packed 1bpp bitmap.
-fn bitmap_value_at(glyph: &Glyph, x: i32, y: i32) -> Result<bool, GlyphrError> {
+fn bitmap_value_at(glyph: &Glyph, x: i32, y: i32) -> Result<u8, GlyphrError> {
     if x < 0 || y < 0 || x >= glyph.width || y >= glyph.height {
         return Err(GlyphrError::OutOfBounds);
     }
-    let bit_index = y * glyph.width + x;
-    let byte_index = (bit_index / 8) as usize;
-    let bit_offset = (bit_index % 8) as u8;
+    let index = (y * glyph.width + x) as usize;
 
-    if byte_index >= glyph.bitmap.len() {
+    let bm = AsNibbles(&glyph.bitmap);
+
+    if index >= bm.len() {
         return Err(GlyphrError::OutOfBounds);
     }
-    let byte = glyph.bitmap[byte_index];
-    let bit = (byte >> (7 - bit_offset)) & 1;
-    Ok(bit == 1)
+    let value = bm.get(index).unwrap_or_default();
+    Ok(u8::from(value) * 16)
 }
 
 #[cfg(test)]

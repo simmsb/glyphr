@@ -12,6 +12,7 @@ repository = "https://github.com/Bridiro/glyphr"
 [dependencies]
 minifb = { version = "0.28", optional = true }
 glyphr-macros = { path = "../glyphr-macros", version = "0.1.2" }
+u4 = { version = "0.1.2", default-features = false }
 
 [features]
 default = ["toml"]
