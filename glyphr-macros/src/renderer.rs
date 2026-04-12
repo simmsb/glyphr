@@ -71,6 +71,7 @@ pub fn render<T: ToFontLoaded>(font_config: T) -> String {
                         size => loaded_font.px,
                         ascent => loaded_font.font.get_ascent(loaded_font.px as f32),
                         descent => loaded_font.font.get_descent(loaded_font.px as f32),
+                        line_gap => loaded_font.font.get_line_gap(loaded_font.px as f32),
                         format => loaded_font.format.to_string(),
                         glyphs => glyphs,
                     },

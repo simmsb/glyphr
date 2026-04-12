@@ -166,4 +166,8 @@ impl Font {
     pub fn get_descent(&self, px: f32) -> i32 {
         (self.horizontal_line_metrics.descent * self.scale_factor(px)) as i32
     }
+
+    pub fn get_line_gap(&self, px: f32) -> i32 {
+        (self.horizontal_line_metrics.line_gap * self.scale_factor(px)) as i32
+    }
 }

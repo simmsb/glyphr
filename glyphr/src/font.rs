@@ -22,6 +22,7 @@ pub struct Font<'a> {
     pub size: u8,
     pub ascent: i8,
     pub descent: i8,
+    pub line_gap: i8,
 }
 
 impl<'a> Font<'a> {
