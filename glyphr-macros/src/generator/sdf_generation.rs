@@ -93,15 +93,26 @@ pub fn sdf_to_bitmap(sdf: &SdfRaster) -> Vec<u8> {
     buffer
 }
 
-pub fn sdf_bitmap_to_fixed_bitmap(sdf_data: &[u8], width: i32, height: i32) -> Vec<u8> {
+pub fn sdf_bitmap_to_fixed_bitmap(sdf_data: &[u8], width: u32, height: u32, scale: u32) -> Vec<u8> {
     let total_pixels = (width * height) as usize;
     let bitmap_size = total_pixels.div_ceil(2);
     let mut bitmap = vec![0u8; bitmap_size];
     let mut bw = AsNibbles(&mut bitmap);
 
-    for (i, sdf_i) in sdf_data.iter().enumerate().take(total_pixels) {
-        let v = U4::new(*sdf_i / 16).unwrap();
-        bw.set(i, v);
+
+    for x in 0..width {
+        for y in 0..height {
+            let r: u32 = (0..scale)
+                .zip(0..scale)
+                .map(|(dx, dy)| {
+                    let idx = (x * scale + dx) + (y * scale + dy) * (width * scale);
+                    sdf_data[idx as usize] as u32
+                })
+                .sum();
+
+            let idx = x + (y * width);
+            bw.set(idx as usize, U4::truncate((r / (16 * scale)) as u8));
+        }
     }
 
     bitmap

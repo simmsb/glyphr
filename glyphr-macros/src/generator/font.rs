@@ -36,9 +36,9 @@ impl LineMetrics {
 pub struct Metrics {
     pub xmin: i32,
     pub ymin: i32,
-    pub width: i32,
-    pub height: i32,
-    pub advance_width: i32,
+    pub width: u32,
+    pub height: u32,
+    pub advance_width: u32,
 }
 
 #[derive(Default)]
@@ -115,9 +115,9 @@ impl Font {
         let metrics = Metrics {
             xmin: bounds.xmin as i32,
             ymin: bounds.ymin as i32,
-            width: bounds.width as i32,
-            height: bounds.height as i32,
-            advance_width: (glyph.advance_width * scale) as i32,
+            width: bounds.width as u32,
+            height: bounds.height as u32,
+            advance_width: (glyph.advance_width * scale) as u32,
         };
 
         Some(metrics)
@@ -129,6 +129,7 @@ impl Font {
         padding: i32,
         spread: f32,
         c: char,
+        scale: u32,
     ) -> Option<(Metrics, SdfRaster)> {
         if px < 1.0 {
             panic!("Sdf render size cannot be smaller than 1.0 (got {px:?})");
@@ -144,8 +145,8 @@ impl Font {
         let metrics = self.metrics(c, px).unwrap(); // Cannot return `None` if glyph is some
 
         let sdf = sdf_generate(
-            metrics.width as u32,
-            metrics.height as u32,
+            scale * metrics.width as u32,
+            scale * metrics.height as u32,
             padding,
             spread,
             &glyph.lines,

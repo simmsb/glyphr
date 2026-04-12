@@ -122,12 +122,6 @@ fn parse_format(input: syn::parse::ParseStream) -> syn::Result<BitmapFormat> {
                 padding: padding
                     .ok_or_else(|| Error::new(content.span(), "Missing 'padding' field"))?,
             }),
-            "SDF" => Ok(BitmapFormat::SDF {
-                spread: spread
-                    .ok_or_else(|| Error::new(content.span(), "Missing 'spread' field"))?,
-                padding: padding
-                    .ok_or_else(|| Error::new(content.span(), "Missing 'padding' field"))?,
-            }),
             _ => Err(Error::new(format_name.span(), "Unknown format")),
         }
     } else {

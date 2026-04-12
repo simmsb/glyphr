@@ -11,7 +11,6 @@ pub trait ToFontLoaded {
 /// Defines with which method to generate the font bitmap.
 #[derive(PartialEq, Deserialize, Copy, Clone)]
 pub enum BitmapFormat {
-    SDF { spread: f32, padding: i32 },
     Bitmap { spread: f32, padding: i32 },
 }
 
@@ -23,12 +22,6 @@ impl fmt::Display for BitmapFormat {
                 spread: _,
                 padding: _,
             } => write!(f, "BitmapFormat::Bitmap"),
-            BitmapFormat::SDF {
-                spread: _,
-                padding: _,
-            } => {
-                write!(f, "BitmapFormat::SDF")
-            }
         }
     }
 }

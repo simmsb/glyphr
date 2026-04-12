@@ -11,9 +11,9 @@ pub struct GlyphEntry {
     pub name: String,
     pub xmin: i32,
     pub ymin: i32,
-    pub width: i32,
-    pub height: i32,
-    pub advance_width: i32,
+    pub width: u32,
+    pub height: u32,
+    pub advance_width: u32,
 }
 
 /// Based on the input, generates a font and return Vec<(bitmaps, entries)> paired
@@ -22,14 +22,15 @@ pub fn generate_font(loaded_font: &crate::config::FontLoaded) -> Vec<(Vec<u8>, G
 
     let (spread, padding) = match loaded_font.format {
         BitmapFormat::Bitmap { spread, padding } => (spread, padding),
-        BitmapFormat::SDF { spread, padding } => (spread, padding),
     };
+
+    let scale = 4;
 
     for c in &loaded_font.char_range {
         if let Some((metrics, glyph_sdf)) =
             loaded_font
                 .font
-                .sdf_generate(loaded_font.px as f32, padding, spread, *c)
+                .sdf_generate(loaded_font.px as f32, padding, spread, *c, scale)
         {
             let mut bitmap_sdf = sdf_generation::sdf_to_bitmap(&glyph_sdf);
             let bitmap = match loaded_font.format {
@@ -41,13 +42,10 @@ pub fn generate_font(loaded_font: &crate::config::FontLoaded) -> Vec<(Vec<u8>, G
                         &bitmap_sdf,
                         metrics.width,
                         metrics.height,
+                        scale,
                     );
                     bitmap_sdf
                 }
-                BitmapFormat::SDF {
-                    spread: _,
-                    padding: _,
-                } => rle_encode(bitmap_sdf),
             };
             entries.push((
                 bitmap,

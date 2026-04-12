@@ -6,13 +6,13 @@
 
 mod api;
 mod font;
-mod renderer;
+// mod renderer;
 mod utils;
 
 pub use api::{
-    BufferTarget, Glyphr, GlyphrError, RenderConfig, RenderTarget, SdfConfig, TextAlign,
+    Glyphr, GlyphrError, RenderConfig, RenderTarget, TextAlign,
 };
-pub use font::{AlignH, AlignV, BitmapFormat, Font, Glyph};
+pub use font::{AlignH, AlignV, Font, Glyph};
 pub use glyphr_macros::generate_font;
 
 #[cfg(feature = "toml")]

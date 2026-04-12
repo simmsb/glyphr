@@ -4,32 +4,24 @@
 
 use crate::GlyphrError;
 
-/// Defines how the glyphs are stored in the bitmaps
-#[derive(Clone, Copy)]
-pub enum BitmapFormat {
-    SDF,
-    Bitmap,
-}
-
 /// Contains informations that are bound to the single glyph
 pub struct Glyph<'a> {
     pub character: char,
     pub bitmap: &'a [u8],
-    pub width: i32,
-    pub height: i32,
-    pub xmin: i32,
-    pub ymin: i32,
-    pub advance_width: i32,
+    pub width: u8,
+    pub height: u8,
+    pub xmin: i8,
+    pub ymin: i8,
+    pub advance_width: i8,
 }
 
 /// Contains informations that are useful for every glyph
 #[derive(Clone, Copy)]
 pub struct Font<'a> {
     pub glyphs: &'a [Glyph<'a>],
-    pub size: i32,
-    pub ascent: i32,
-    pub descent: i32,
-    pub format: BitmapFormat,
+    pub size: u8,
+    pub ascent: i8,
+    pub descent: i8,
 }
 
 impl<'a> Font<'a> {

@@ -23,7 +23,7 @@ To get started visit [glyphr-macros](https://github.com/Bridiro/glyphr/tree/mast
 To decide how to write pixels you can use `BufferTarget` (only if you're using a `[u32]` array). If you're using a custom target you need to implement the `RenderTarget` trait on it.
 Then you create the struct `Glyphr`:
 ```rust
-use glyphr::{ Glyphr, BufferTarget, RenderConfig, SdfConfig };
+use glyphr::{ Glyphr, BufferTarget, RenderConfig};
 
 let mut target = BufferTarget::new(&mut buffer, 800, 480);
 let conf = RenderConfig {

@@ -1,4 +1,4 @@
-use glyphr::{AlignH, AlignV, BufferTarget, Glyphr, RenderConfig, SdfConfig, TextAlign};
+use glyphr::{AlignH, AlignV, BufferTarget, Glyphr, RenderConfig, TextAlign};
 #[cfg(feature = "window")]
 use minifb::{Window, WindowOptions};
 
