@@ -97,6 +97,28 @@ impl Glyphr {
 
         Ok(it)
     }
+
+    #[inline(always)]
+    pub fn pixels_scaled<'a>(
+        &self,
+        c: char,
+        font: Font<'a>,
+        scale: u8,
+    ) -> Result<impl Iterator<Item = U4> + use<'a>, GlyphrError> {
+        let glyph = font.find_glyph(c)?;
+        let width = glyph.width;
+        let nibbles = AsNibbles(glyph.bitmap);
+
+        let it = itertools::iproduct!(0..(scale * glyph.height as u8), 0..(scale * glyph.width as u8)).map(
+            move |(y, x)| {
+                nibbles
+                    .get((x / scale) as usize + (y / scale) as usize * width as usize)
+                    .unwrap_or_default()
+            },
+        );
+
+        Ok(it)
+    }
 }
 
 #[derive(Debug, Clone)]
