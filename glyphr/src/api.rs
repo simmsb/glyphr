@@ -3,9 +3,10 @@
 //! This module describes the public API to this library.
 //! Everything is done via the `Glyphr` struct.
 
-use u4::{AsNibbles, U4};
-
-use crate::font::{AlignH, AlignV, Font};
+use crate::{
+    font::{AlignH, AlignV, Font},
+    nibbles::{AsNibbles, U4},
+};
 
 /// Trait used to make a target writable by Glyphr.
 pub trait RenderTarget {
@@ -88,10 +89,8 @@ impl Glyphr {
         let nibbles = AsNibbles(glyph.bitmap);
 
         let it = itertools::iproduct!(0..(glyph.height as u8), 0..(glyph.width as u8)).map(
-            move |(y, x)| {
-                nibbles
-                    .get(x as usize + y as usize * width as usize)
-                    .unwrap_or_default()
+            move |(y, x)| unsafe {
+                nibbles.get_unchecked(x as usize + y as usize * width as usize)
             },
         );
 
@@ -109,13 +108,13 @@ impl Glyphr {
         let width = glyph.width;
         let nibbles = AsNibbles(glyph.bitmap);
 
-        let it = itertools::iproduct!(0..(scale * glyph.height as u8), 0..(scale * glyph.width as u8)).map(
-            move |(y, x)| {
-                nibbles
-                    .get((x / scale) as usize + (y / scale) as usize * width as usize)
-                    .unwrap_or_default()
-            },
-        );
+        let it = itertools::iproduct!(
+            0..(scale * glyph.height as u8),
+            0..(scale * glyph.width as u8)
+        )
+        .map(move |(y, x)| unsafe {
+            nibbles.get_unchecked((x / scale) as usize + (y / scale) as usize * width as usize)
+        });
 
         Ok(it)
     }

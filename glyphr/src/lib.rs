@@ -8,6 +8,7 @@ mod api;
 mod font;
 // mod renderer;
 mod utils;
+pub mod nibbles;
 
 pub use api::{
     Glyphr, GlyphrError, RenderConfig, RenderTarget, TextAlign,
